@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom Meme Creator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="logo.jpg" alt="Meme Creator Logo">
+      <h1>Custom Meme Creator</h1>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="#create">Create Meme</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h2 id="create">Create Your Meme</h2>
+    <div class="controls">
+      <input type="file" id="imageUpload" accept="image/*">
+      <select id="presetImages">
+        <option value="" disabled selected>Select a preset</option>
+        <option value="preset1.jpg">lowwwwwwwww</option>
+        <option value="preset2.jpg">2025 massive meme</option>
+      </select>
+      <input type="text" id="topText" placeholder="Top Text">
+      <input type="text" id="bottomText" placeholder="Bottom Text">
+      <button id="downloadMeme">Download Meme</button>
+    </div>
+    <canvas id="memeCanvas"></canvas>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Custom Meme Creator. All rights reserved.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
