@@ -69,11 +69,19 @@ imageUpload.addEventListener("change", (e) => {
 
 // Handle preset image selection
 presetImages.addEventListener("change", (e) => {
-  const selectedImage = e.target.value;
-  if (selectedImage) {
-    loadImage(selectedImage);
-  }
-});
+    const selectedImage = e.target.value;
+    
+    if (selectedImage === "none") {
+      // Clear canvas and reset inputs
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      topTextInput.value = "";
+      bottomTextInput.value = "";
+      currentImage = null; // Clear the current image reference
+    } else if (selectedImage) {
+      loadImage(selectedImage);
+    }
+  });
+  
 
 // Update text dynamically
 topTextInput.addEventListener("input", redrawCanvas);
