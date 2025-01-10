@@ -6,7 +6,8 @@
   <title>Custom Meme Creator</title>
   <link rel="stylesheet" href="style.css">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <!-- Add Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
   <header>
@@ -22,6 +23,7 @@
       </ul>
     </nav>
   </header>
+
   <div class="container">
     <h2 id="create">Create Your Meme</h2>
     <div class="controls">
@@ -29,19 +31,26 @@
       <select id="presetImages">
         <option value="" disabled selected>Select a preset</option>
         <option value="none">None</option>
-        <option value="cat.jpg">Funny Cat</option>
-        <option value="dog.jpg">Silly Dog</option>
+        <option value="preset1.jpg">Lowwwwwwwwww</option>
+        <option value="preset2.jpg">Massive 2025</option>
       </select>
+      <button id="randomTextButton">Generate Random Text</button>
+      <button id="shareButton" class="share-button">Share</button>
       <input type="text" id="topText" placeholder="Top Text">
       <input type="text" id="bottomText" placeholder="Bottom Text">
-      <button id="conditionalRandomizeMeme">Smart Randomize</button>
       <button id="downloadMeme">Download Meme</button>
     </div>
-    <canvas id="memeCanvas"></canvas>
+    <div class="meme-container">
+      <div id="canvas-container">
+        <canvas id="memeCanvas" width="800" height="600"></canvas>
+      </div>
+    </div>
   </div>
+
   <footer>
     <p>&copy; 2025 Custom Meme Creator. All rights reserved.</p>
   </footer>
+
   <script src="script.js"></script>
 </body>
 </html>

@@ -5,14 +5,108 @@ const presetImages = document.getElementById("presetImages");
 const topTextInput = document.getElementById("topText");
 const bottomTextInput = document.getElementById("bottomText");
 const downloadMemeButton = document.getElementById("downloadMeme");
-const randomizeMemeButton = document.getElementById("conditionalRandomizeMeme");
-
-// Set canvas dimensions
-canvas.width = 600;
-canvas.height = 400;
+const randomTextButton = document.getElementById("randomTextButton");
 
 // Store the current image for redrawing
 let currentImage = null;
+
+// Random text arrays for top and bottom text
+const topTextOptions = [
+  "Just woke up",
+  "I need coffee",
+  "Too tired",
+  "One more episode",
+  "Not today",
+  "Too much work",
+  "Help me",
+  "Weekend please",
+  "Napping all day",
+  "Will it ever end?",
+  "I can't even",
+  "Why am I awake?",
+  "Can I stay home?",
+  "I’m so lost",
+  "Gotta nap",
+  "Still tired",
+  "So done",
+  "Too much thinking",
+  "No more meetings",
+  "Is it Friday yet?",
+  "Time to zone out",
+  "Need a break",
+  "This can’t be real",
+  "Everything hurts",
+  "Just five more minutes",
+  "No motivation",
+  "Can’t focus",
+  "I need a snack",
+  "Please no more",
+  "I’ll pass",
+  "I am broken",
+  "Can we cancel today?",
+  "Brain is off",
+  "Not enough sleep",
+  "Feeling lazy",
+  "Send coffee",
+  "Send memes",
+  "Please be the weekend",
+  "Why is it so early?",
+  "I’m not ready",
+  "Can I get a nap?",
+  "Just woke up confused",
+  "This is a lot"
+];
+
+const bottomTextOptions = [
+  "Coffee first",
+  "Send help",
+  "Not enough sleep",
+  "Where's my blanket?",
+  "Five more minutes",
+  "I can't adult",
+  "Let me sleep",
+  "This is fine",
+  "Can't function",
+  "Send memes",
+  "Too much to do",
+  "In need of caffeine",
+  "Brain not working",
+  "Maybe tomorrow",
+  "Where is my bed?",
+  "Let’s nap forever",
+  "Just one more minute",
+  "I can't even today",
+  "Does it ever end?",
+  "Not ready for this",
+  "My brain is mush",
+  "Please, no more work",
+  "Who needs sleep?",
+  "I need chocolate",
+  "Can I skip this?",
+  "I need a nap",
+  "I’ll deal with it later",
+  "Nothing makes sense",
+  "Send snacks",
+  "I’m still in bed",
+  "This isn’t real",
+  "Just leave me alone",
+  "Can't talk now",
+  "Let me be",
+  "In a mood today",
+  "Too much chaos",
+  "I’ll sleep through it",
+  "Not today, please",
+  "Just let me rest",
+  "Work in progress",
+  "Don’t talk to me",
+  "Please let me sleep",
+  "I’m so done"
+];
+
+
+// Initial canvas size
+canvas.width = 800;
+canvas.height = 600;
 
 // Load and draw image
 function loadImage(url) {
@@ -20,44 +114,110 @@ function loadImage(url) {
   img.src = url;
   img.onload = () => {
     currentImage = img;
+    adjustCanvasSize(img);
     redrawCanvas();
   };
+}
+
+// Adjust canvas size based on the image's aspect ratio
+function adjustCanvasSize(img) {
+  const aspectRatio = img.width / img.height;
+
+  if (img.width > img.height) {
+    canvas.width = Math.min(img.width, 800);
+    canvas.height = canvas.width / aspectRatio;
+  } else {
+    canvas.height = Math.min(img.height, 600);
+    canvas.width = canvas.height * aspectRatio;
+  }
+
+  const canvasContainer = document.querySelector(".meme-container");
+  canvasContainer.style.width = canvas.width + 'px';
+  canvasContainer.style.height = canvas.height + 'px';
 }
 
 // Redraw the canvas with the image and text
 function redrawCanvas() {
   if (!currentImage) return;
 
-  // Clear entire canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Draw image
-  ctx.drawImage(currentImage, 0, 0, canvas.width, canvas.height);
+  const imgAspectRatio = currentImage.width / currentImage.height;
+  let imgWidth = canvas.width;
+  let imgHeight = canvas.width / imgAspectRatio;
 
-  // Draw text
+  if (imgHeight > canvas.height) {
+    imgHeight = canvas.height;
+    imgWidth = canvas.height * imgAspectRatio;
+  }
+
+  const xPos = (canvas.width - imgWidth) / 2;
+  const yPos = (canvas.height - imgHeight) / 2;
+
+  ctx.drawImage(currentImage, xPos, yPos, imgWidth, imgHeight);
+
+  const textMargin = 40;
   const topText = topTextInput.value.toUpperCase();
   const bottomText = bottomTextInput.value.toUpperCase();
 
-  ctx.font = "30px Impact";
+  let fontSize = Math.min(imgHeight * 0.1, 50); // Font size 10% of image height, or 50px max
+
   ctx.fillStyle = "white";
   ctx.strokeStyle = "black";
   ctx.textAlign = "center";
   ctx.lineWidth = 2;
 
-  // Top text
-  if (topText) {
-    ctx.fillText(topText, canvas.width / 2, 50);
-    ctx.strokeText(topText, canvas.width / 2, 50);
+  function getMaxFontSize(text, width) {
+    let size = fontSize;
+    ctx.font = `${size}px Impact`;
+
+    while (ctx.measureText(text).width > width - 40 && size > 10) {
+      size -= 1;
+      ctx.font = `${size}px Impact`;
+    }
+    return size;
   }
 
-  // Bottom text
+  function drawTextWithWrapping(text, x, y, maxWidth) {
+    const words = text.split(" ");
+    let line = "";
+    const lineHeight = 1.2; // Line spacing for text
+
+    for (let i = 0; i < words.length; i++) {
+      const testLine = line + words[i] + " ";
+      const testWidth = ctx.measureText(testLine).width;
+
+      if (testWidth > maxWidth && line !== "") {
+        ctx.fillText(line, x, y);
+        ctx.strokeText(line, x, y);
+        line = words[i] + " ";
+        y += fontSize * lineHeight;
+      } else {
+        line = testLine;
+      }
+    }
+
+    ctx.fillText(line, x, y);
+    ctx.strokeText(line, x, y);
+  }
+
+  let adjustedFontSize = getMaxFontSize(topText, imgWidth);
+  ctx.font = `${adjustedFontSize}px Impact`;
+  let topTextY = yPos + textMargin + adjustedFontSize;
+
+  if (topText) {
+    drawTextWithWrapping(topText, canvas.width / 2, topTextY, imgWidth);
+  }
+
+  adjustedFontSize = getMaxFontSize(bottomText, imgWidth);
+  ctx.font = `${adjustedFontSize}px Impact`;
+  let bottomTextY = yPos + imgHeight - textMargin - adjustedFontSize / 2;
+
   if (bottomText) {
-    ctx.fillText(bottomText, canvas.width / 2, canvas.height - 20);
-    ctx.strokeText(bottomText, canvas.width / 2, canvas.height - 20);
+    drawTextWithWrapping(bottomText, canvas.width / 2, bottomTextY, imgWidth);
   }
 }
 
-// Handle image upload
 imageUpload.addEventListener("change", (e) => {
   const file = e.target.files[0];
   if (file) {
@@ -67,207 +227,63 @@ imageUpload.addEventListener("change", (e) => {
   }
 });
 
-// Handle preset image selection
 presetImages.addEventListener("change", (e) => {
   const selectedImage = e.target.value;
-  
   if (selectedImage === "none") {
-    // Clear canvas and reset inputs
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     topTextInput.value = "";
     bottomTextInput.value = "";
-    currentImage = null; // Clear the current image reference
+    currentImage = null;
   } else if (selectedImage) {
     loadImage(selectedImage);
   }
 });
 
-// Update text dynamically
 topTextInput.addEventListener("input", redrawCanvas);
 bottomTextInput.addEventListener("input", redrawCanvas);
 
-// Download meme
-downloadMemeButton.addEventListener("click", () => {
-  const link = document.createElement("a");
-  link.download = "meme.png";
-  link.href = canvas.toDataURL();
-  link.click();
-});
-
-const memeTopTextOptions = [
-  "When you realize it's Monday...",
-  "Me trying to survive this day...",
-  "That moment you regret your decisions...",
-  "When you see the bill after a night out...",
-  "Me, looking at my empty fridge...",
-  "When the WiFi goes down for 5 minutes...",
-  "That feeling when you find your lost socks...",
-  "When the coffee kicks in...",
-  "Me when I hear someone eating chips loudly...",
-  "When your favorite show ends forever...",
-  "Me pretending to be busy at work...",
-  "When you hit snooze for the 10th time...",
-  "The moment you realize you're late...",
-  "Me when I see someone eating my food...",
-  "That awkward moment when you forget someone's name...",
-  "When the dog looks at you like that...",
-  "When you're trying to act cool but fail...",
-  "Me waiting for the weekend like...",
-  "When you see your ex after a long time...",
-  "When the autocorrect makes things worse...",
-  "Me looking for my phone while holding it...",
-  "That moment when you remember a funny joke...",
-  "When you have no idea what you're doing...",
-  "Me looking at my bank account...",
-  "When you realize you have an exam tomorrow...",
-  "When you see a spider and you're alone...",
-  "When you're too tired to function...",
-  "When the pizza delivery guy arrives...",
-  "When you catch your reflection in the mirror...",
-  "Me in the morning before coffee...",
-  "That moment when you understand the joke...",
-  "When your friend tells a terrible pun...",
-  "When you can't decide between two options...",
-  "Me trying to remember if I locked the door...",
-  "That feeling when you wake up in a panic...",
-  "When your phone battery is on 1%...",
-  "When you accidentally send a text to the wrong person...",
-  "When you try to take a cute selfie...",
-  "Me trying to read a long message from my mom...",
-  "That awkward silence when someone says something dumb...",
-  "When you finally find your glasses...",
-  "When you're stuck in traffic for hours...",
-  "Me when I hear a new song I love...",
-  "That moment when you get a compliment...",
-  "When you're not sure if you want to nap or work...",
-  "Me looking for my charger in the dark...",
-  "When you get lost in your own neighborhood...",
-  "That moment when you realize you're out of snacks...",
-  "When you see a kid do something impressive...",
-  "When you realize you're out of coffee...",
-  "That moment when you hear a doorbell ring...",
-  "When you decide to start a diet but eat junk food...",
-  "When your friend makes a bad joke...",
-  "When you open your computer to work and get distracted...",
-  "When you try to impress someone and fail miserably...",
-  "When you see someone embarrassing themselves...",
-  "When you find out you still have to work...",
-  "Me after I mess up in a meeting...",
-  "When the text is too long to read but you do anyway...",
-  "That moment when you realize you're the only one left...",
-  "When you hear someone else’s plans and you’re too tired to go...",
-  "When you binge-watch a whole series in one day...",
-  "When you find out there’s a new flavor of ice cream...",
-  "Me when I accidentally call someone by the wrong name...",
-  "That feeling when you just want to take a nap...",
-  "When you realize it's Friday but you're still working...",
-  "When the weekend feels so far away...",
-  "When you’re too tired to function properly...",
-  "When you’re waiting for an email from your boss...",
-  "Me looking for my glasses in my hand...",
-  "That feeling when you realize you left your phone somewhere...",
-  "When you get a new message but it's just spam...",
-  "When you discover a new app that wastes all your time...",
-  "When the weather is perfect but you're stuck inside...",
-  "That feeling when you wake up and it's still dark outside...",
-  "When you hear a joke but don’t get it...",
-  "Me trying to hide my excitement when I see food...",
-  "When you look at the time and realize it's way too late...",
-  "When you finally decide to take a break from work...",
-  "That moment when your friend steals your food...",
-  "When you think you’ve seen a ghost but it’s just your shadow...",
-  "When the boss says 'Just one more thing'...",
-  "That moment when your pet gives you a disapproving look...",
-  "When you realize you’ve been holding your breath...",
-  "Me when I’m trying to act like I’m not interested...",
-  "When the WiFi comes back after a long break...",
-  "When you eat something spicy for the first time...",
-  "Me when my phone autocorrects something funny...",
-  "When the coffee hits and suddenly everything makes sense...",
-  "When your friend makes a suggestion you didn’t ask for...",
-  "That moment when you find the perfect meme...",
-  "When you see something cute and just can’t handle it...",
-  "When you remember you forgot to do something important...",
-  "Me trying to act professional in front of my boss...",
-  "When your favorite song comes on the radio...",
-  "That moment when you realize you’re running late...",
-  "When you’re trying to get comfy but your pillow doesn’t cooperate...",
-  "When you’re too tired to deal with it...",
-  "When you see an unexpected text from someone...",
-  "Me when I look at my calendar and see deadlines...",
-  "When you decide to skip work and just nap all day..."
-];
-
-const memeBottomTextOptions = [
-  "...and you're not prepared.",
-  "...but the damage is already done.",
-  "...and then you immediately regret it.",
-  "...and wish you could turn back time.",
-  "...it’s always the same story.",
-  "...and now everything is ruined.",
-  "...I don't think I'll ever be the same.",
-  "...and everything else is just a blur.",
-  "...seriously, it's like a torture device.",
-  "...and you're just left there, speechless.",
-  "...no one warned me about this.",
-  "...but it’s too late now.",
-  "...and you're still confused.",
-  "...and nothing makes sense anymore.",
-  "...but at least I survived.",
-  "...and I never want to go through that again.",
-  "...I didn’t ask for this.",
-  "...and it’s going to haunt me forever.",
-  "...just another day of chaos.",
-  "...and now I’m stuck with the consequences.",
-  "...and my heart can’t take it anymore.",
-  "...and that’s when things went downhill.",
-  "...and I’m never going back.",
-  "...and I’ll be sleeping forever.",
-  "...but now it's a whole new adventure.",
-  "...and I can't believe this happened.",
-  "...and I’m just here for the ride.",
-  "...and it’s been downhill from there.",
-  "...and now I need therapy.",
-  "...but I’m not sure if I’m alive anymore.",
-  "...and nothing makes sense anymore.",
-  "...and that's how the story ends.",
-  "...and I can't stop laughing.",
-  "...and it's all downhill from here.",
-  "...but I can’t stop smiling.",
-  "...and I’m so confused right now.",
-  "...and I need answers, NOW.",
-  "...and my whole life is a meme.",
-  "...and I think I broke something.",
-  "...but my patience is wearing thin.",
-  "...and that was my last nerve.",
-  "...and it's just another Monday...",
-  "...and it's too late to change things.",
-  "...but I still have to survive.",
-  "...and I’ll never let it go.",
-  "...but I’m still here for it.",
-  "...and it’s always the worst timing.",
-  "...and I’ll never get over this moment.",
-  "...and it’s the end of the world as I know it.",
-  "...and life just keeps getting weirder."
-];
-
-// Function to generate random meme text
-const generateRandomMemeText = () => {
-  const randomTopText = memeTopTextOptions[Math.floor(Math.random() * memeTopTextOptions.length)];
-  const randomBottomText = memeBottomTextOptions[Math.floor(Math.random() * memeBottomTextOptions.length)];
+randomTextButton.addEventListener("click", () => {
+  const randomTopText = topTextOptions[Math.floor(Math.random() * topTextOptions.length)];
+  const randomBottomText = bottomTextOptions[Math.floor(Math.random() * bottomTextOptions.length)];
 
   topTextInput.value = randomTopText;
   bottomTextInput.value = randomBottomText;
 
-  console.log(`Generated Meme Text: Top - "${randomTopText}", Bottom - "${randomBottomText}"`);
+  redrawCanvas();
+});
 
-  redrawCanvas(); // Re-render the canvas with the new random text
-};
+downloadMemeButton.addEventListener("click", () => {
+  const memeUrl = canvas.toDataURL();
+  const a = document.createElement("a");
+  a.href = memeUrl;
+  a.download = "meme.png";
+  a.click();
+});
 
-// Randomize meme button click event
-randomizeMemeButton.addEventListener('click', () => {
-  console.log('Randomize Meme button clicked');
+const shareButton = document.getElementById("shareButton");
 
-  // Generate meme text
-  generateRandomMemeText();
+shareButton.addEventListener("click", () => {
+  memeCanvas.toBlob((blob) => {
+    const memeUrl = URL.createObjectURL(blob);
+
+    if (navigator.share) {
+      navigator.share({
+        title: 'Check out my Meme!',
+        text: 'Here is a funny meme I created!',
+        files: [new File([blob], 'meme.png', { type: 'image/png' })],
+      }).then(() => console.log('Meme shared successfully'))
+        .catch((error) => console.error('Error sharing the meme:', error));
+    } else {
+      const tempInput = document.createElement('input');
+      tempInput.value = memeUrl;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+
+      alert('Meme URL copied to clipboard! You can share it now!');
+    }
+
+    URL.revokeObjectURL(memeUrl);
+  }, 'image/png');
 });
