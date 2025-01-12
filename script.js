@@ -7,6 +7,7 @@ const bottomTextInput = document.getElementById("bottomText");
 const downloadMemeButton = document.getElementById("downloadMeme");
 const randomTextButton = document.getElementById("randomTextButton");
 
+
 // Store the current image for redrawing
 let currentImage = null;
 
@@ -287,3 +288,15 @@ shareButton.addEventListener("click", () => {
     URL.revokeObjectURL(memeUrl);
   }, 'image/png');
 });
+// Fullscreen functionality
+fullscreenButton.addEventListener("click", function () {
+  const element = document.documentElement;
+  if (element.requestFullscreen) {
+    element.requestFullscreen();
+  } else if (element.webkitRequestFullscreen) {
+    element.webkitRequestFullscreen();
+  } else if (element.msRequestFullscreen) {
+    element.msRequestFullscreen();
+  }
+});
+

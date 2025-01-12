@@ -1,30 +1,8 @@
 /* General Reset */
-/* Apply text wrapping to ensure that the text doesn't overflow */
-.meme-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  margin-top: 20px;
-  position: relative;
-}
-
-canvas {
-  width: 100%;
-  height: auto;
-  max-width: 800px; /* Adjust this based on your desired canvas size */
-  max-height: 600px;
-}
-
-/* Text styling for meme */
-.meme-text {
-  font-family: Arial, sans-serif;
-  font-weight: bold;
-  color: white;
-  text-align: center;
-  word-wrap: break-word;  /* Enable text wrapping */
-  text-transform: uppercase;
-  padding: 10px;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
@@ -34,11 +12,9 @@ body {
   background: linear-gradient(180deg, #121212, #1c1c1c);
   color: #e0e0e0;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
   flex-direction: column;
-  overflow-x: hidden;
+  min-height: 100vh;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 /* Header */
@@ -49,10 +25,7 @@ header {
   padding: 15px 30px;
   background: #181818;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  position: sticky;
-  top: 0;
   width: 100%;
-  z-index: 1000;
 }
 
 .logo {
@@ -78,10 +51,6 @@ nav ul {
   gap: 20px;
 }
 
-nav ul li {
-  position: relative;
-}
-
 nav ul li a {
   text-decoration: none;
   color: #ffffff;
@@ -96,29 +65,6 @@ nav ul li a:hover {
   background: linear-gradient(90deg, #ff8c00, #ffa500);
   transform: scale(1.1);
 }
-.meme-text {
-  position: absolute;
-  color: white;
-  font-family: Arial, sans-serif;
-  font-weight: bold;
-  text-align: center;
-  word-wrap: break-word; /* Allow words to break */
-  overflow: hidden;
-  padding: 5px;
-  box-sizing: border-box;
-}
-
-.meme-text-top {
-  top: 10px; /* Adjust top margin for top text */
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.meme-text-bottom {
-  bottom: 10px; /* Adjust bottom margin for bottom text */
-  left: 50%;
-  transform: translateX(-50%);
-}
 
 /* Container */
 .container {
@@ -129,7 +75,6 @@ nav ul li a:hover {
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 1s ease-out;
   text-align: center;
 }
 
@@ -156,7 +101,6 @@ h2 {
   color: #ffffff;
   outline: none;
   transition: transform 0.2s, background 0.3s;
-  width: 100%;
 }
 
 .controls input:hover,
@@ -180,7 +124,7 @@ h2 {
 /* Canvas */
 .meme-container {
   width: 100%;
-  max-width: 550px; /* Adjust max width as needed */
+  max-width: 550px;
   margin: auto;
   position: relative;
 }
@@ -193,7 +137,30 @@ canvas {
   border-radius: 10px;
 }
 
+/* Fullscreen Button Styling */
+.fullscreen-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 15px;
+  background: linear-gradient(90deg, #ff8c00, #ffa500);
+  color: #ffffff;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s, background 0.3s;
+}
 
+.fullscreen-button:hover {
+  background: linear-gradient(90deg, #ffa500, #ff8c00);
+  transform: scale(1.1);
+}
 
 /* Footer */
 footer {
@@ -201,62 +168,4 @@ footer {
   padding: 10px 20px;
   background: #181818;
   color: #b0b0b0;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  header {
-    padding: 15px 20px;
-  }
-
-  .container {
-    padding: 15px;
-    width: 90%;
-  }
-
-  .controls {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .controls input,
-  .controls select,
-  .controls button {
-    width: 100%;
-    margin: 5px 0;
-  }
-
-  h2 {
-    font-size: 1.2rem;
-  }
-}
-
-@media (max-width: 480px) {
-  header {
-    padding: 10px 15px;
-  }
-
-  .logo img {
-    width: 30px;
-    height: 30px;
-  }
-
-  h2 {
-    font-size: 1rem;
-  }
 }
